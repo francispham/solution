@@ -38,6 +38,47 @@
   max-width: 500px;
   width: 100%;
 }
+.slideRight {
+  max-width: 500px;
+  width: 100%;
+  position: relative;
+  animation-duration: 1s;
+  animation-name: slideinRight;
+}
+.slideLeft {
+  max-width: 500px;
+  width: 100%;
+  position: relative;
+  animation-duration: 1s;
+  animation-name: slideinLeft;
+}
+.sliders {
+  width: 500px;
+  overflow: hidden;
+}
+@keyframes slideinRight {
+  from {
+    margin-left: 100%;
+    width: 300%;
+  }
+
+  to {
+    margin-left: 0%;
+    width: 100%;
+  }
+}
+@keyframes slideinLeft {
+  from {
+    margin-left: -100%;
+    width: 300%;
+  }
+
+  to {
+    margin-left: 0%;
+    width: 100%;
+  }
+}
+
 .left, .right {
   position: relative;
   left: 5rem;

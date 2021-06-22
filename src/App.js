@@ -12,7 +12,7 @@ right when the buttons are clicked.
 if the window is made smaller.
 */
 
-import React, {useState, useEffect} from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import './App.css'
 
 const link = 'https://gist.githubusercontent.com/manfredxu99/df3be12d855d2e8825d30784a43d4b31/raw/d5efd3062343703df33bf0ec1b0c469fb83cb9f9/cat.json';
@@ -22,40 +22,58 @@ const CHEVRON_RIGHT_SRC = 'https://icons.deanishe.net/icon/material/444/arrow-ri
 const CatGallery = () => {
   const [data, setData] = useState([]);
   const [count, setCount] = useState(0);
+  const [isMounted, setIsMounted] = useState(true);
+  const [isRight, setIsRight] = useState(true);
   
   useEffect(() => {
     const fetchData = () => fetch(link).then(res => res.json()).then(resData => setData(resData.cats));
     fetchData();
   }, []);
+
+  useMemo(() => {
+    let timeoutId = isMounted ? setTimeout(() => setIsMounted(false), 1000) : null;
+    return () => clearTimeout(timeoutId);
+  }, [isMounted])
   
   function chevronRight () {
+    setIsMounted(false);
     if (count === data.length - 1) {
       setCount(0)
     } else {
       setCount(count + 1)
     }
+    setIsMounted(true);
+    setIsRight(true);
   }
   function chevronLeft () {
+    setIsMounted(false);
     if (count === 0) {
       setCount(data.length - 1)
     } else {
       setCount(count - 1)
     }
+    setIsMounted(true);
+    setIsRight(false);
   }
+
   return (
     <>
       <div className='flex'>
         <div onClick={() => chevronLeft()} >
           <img className='left' alt={CHEVRON_LEFT_SRC} src={CHEVRON_LEFT_SRC} />
         </div>
-        {data && <img className='image' alt={data[count]?.src} src={data[count]?.src} />}
+        <div className='sliders'>
+          <div className={isMounted ? isRight ? 'slideRight' : 'slideLeft' : ''}>
+            {data && <img className='image' alt={data[count]?.src} src={data[count]?.src} />}
+          </div>
+        </div>
         <div onClick={() => chevronRight()} >
           <img className='right' alt={CHEVRON_RIGHT_SRC} src={CHEVRON_RIGHT_SRC} />
         </div>
       </div>
       <div className='preview'>
         <div className='flex flex-dot'>
-          {data.map((cat, index) => <div key={index} className={index === count ? 'dot' : 'current-dot'} />)}
+          {data.map((cat, index) => <div key={cat.src} className={index === count ? 'dot' : 'current-dot'} />)}
         </div>
       </div>
     </>
